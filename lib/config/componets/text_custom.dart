@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
+
+import '../color/colors.dart';
 
 
 class TextCustom extends StatelessWidget {
@@ -20,7 +21,7 @@ class TextCustom extends StatelessWidget {
     required this.text,
     this.textSize = 12,
     this.fontWeight = FontWeight.normal,
-    this.color = lightBgColor,
+    this.color = AppColor.lightBgColor,
     this.textAlign = TextAlign.start,
     this.decoration = TextDecoration.none,
     this.fontStyle = FontStyle.normal,

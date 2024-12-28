@@ -1,4 +1,4 @@
-package com.example.newsapp
+package com.example.reciepeapp
 
 import io.flutter.embedding.android.FlutterActivity
 

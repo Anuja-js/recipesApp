@@ -1,47 +1,40 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsapp/blocs/home/seach_event.dart';
 import 'package:newsapp/blocs/home/search_state.dart';
+import 'package:newsapp/models/recipes_model.dart';
 
-import '../../ repositories/news_repo.dart';
+import '../../ repositories/recipie_repo.dart';
 
 
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   final RecipieRepository recipeRepository;
+  int currentPage = 0;
+  bool hasMoreData = true;
+  List<Result> allRecipes = [];
 
-  RecipeBloc({required this.recipeRepository}) : super(RecipeInitial());
+  RecipeBloc({required this.recipeRepository}) : super(RecipeInitial()) {
+    on<FetchRecipesEvent>((event, emit) async {
+      if (!hasMoreData) return;
 
-  @override
-  Stream<RecipeState> mapEventToState(RecipeEvent event) async* {
-    if (event is FetchRecipesEvent) {
-      yield RecipeLoading();
+      emit(RecipeLoading());
       try {
-        final recipes = await recipeRepository.fetchRecipes(query: event.query);
+        final recipes = await recipeRepository.fetchRecipes(
+          query: event.query,
+          number: 10,
+          offset: currentPage * 10,
+        );
         if (recipes.results != null && recipes.results!.isNotEmpty) {
-          yield RecipeLoaded(recipes.results!);
+          allRecipes.addAll(recipes.results!);
+          currentPage++;
+          hasMoreData = recipes.results!.length == 10;
+          emit(RecipeLoaded(allRecipes));
         } else {
-          yield RecipeError('No recipes found for "${event.query}".');
+          hasMoreData = false;
+          emit(RecipeLoaded(allRecipes));
         }
       } catch (e) {
-        yield RecipeError('Failed to fetch recipes: $e');
+        emit(RecipeError('Failed to fetch recipes: $e'));
       }
-    }
-
-    // if (event is FetchRecipesEvent) {
-    //   yield RecipeLoading();
-    //   try {
-    //     final recipes = await recipeRepository.fetchRecipes(query: event.query);
-    //     yield RecipeLoaded(recipes.results ?? []);
-    //   } catch (e) {
-    //     yield RecipeError('Failed to fetch recipes');
-    //   }
-    // }
-    else if (event is FilterRecipesEvent) {
-      if (state is RecipeLoaded) {
-        final currentState = state as RecipeLoaded;
-        final filteredRecipes = currentState.recipes.where((recipe) =>
-        recipe.title?.toLowerCase().contains(event.query.toLowerCase()) ?? false).toList();
-        yield RecipeLoaded(filteredRecipes);
-      }
-    }
+    });
   }
 }

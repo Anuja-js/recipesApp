@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:newsapp/config/routes/routes_names.dart';
+import '../../blocs/splash/splash.cubit.dart';
 
-import '../blocs/splash/splash.cubit.dart';
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -10,7 +11,7 @@ class SplashScreen extends StatelessWidget {
     return  BlocListener<SplashCubit, bool>(
         listener: (context, state) {
           if (state) {
-            Navigator.pushReplacementNamed(context, '/news');
+            Navigator.pushReplacementNamed(context,RoutesName.homeScreen);
           }
         },
         child: Scaffold(
