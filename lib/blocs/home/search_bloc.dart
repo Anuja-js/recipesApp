@@ -1,9 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:newsapp/%20repositories/recipie_repo.dart';
 import 'package:newsapp/blocs/home/seach_event.dart';
 import 'package:newsapp/blocs/home/search_state.dart';
 import 'package:newsapp/models/recipes_model.dart';
-
-import '../../ repositories/recipie_repo.dart';
 
 
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
@@ -14,24 +13,34 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
 
   RecipeBloc({required this.recipeRepository}) : super(RecipeInitial()) {
     on<FetchRecipesEvent>((event, emit) async {
-      if (!hasMoreData) return;
+      if (!hasMoreData && event.query.isEmpty) return;
 
       emit(RecipeLoading());
+
       try {
+        // Fetch recipes with provided query
         final recipes = await recipeRepository.fetchRecipes(
           query: event.query,
           number: 10,
           offset: currentPage * 10,
         );
-        if (recipes.results != null && recipes.results!.isNotEmpty) {
-          allRecipes.addAll(recipes.results!);
-          currentPage++;
-          hasMoreData = recipes.results!.length == 10;
-          emit(RecipeLoaded(allRecipes));
-        } else {
-          hasMoreData = false;
-          emit(RecipeLoaded(allRecipes));
+
+        // Handle case where no results are found
+        if (recipes.results == null || recipes.results!.isEmpty) {
+          emit(RecipeError(
+            event.query.isEmpty
+                ? 'No recipes found. Please refine your search!'
+                : 'No recipes found for "${event.query}". Please try again.',
+          ));
+          return;
         }
+
+        // Add new results to the list
+        allRecipes.addAll(recipes.results!);
+        currentPage++;
+        hasMoreData = recipes.results!.length == 10;
+
+        emit(RecipeLoaded(allRecipes));
       } catch (e) {
         emit(RecipeError('Failed to fetch recipes: $e'));
       }

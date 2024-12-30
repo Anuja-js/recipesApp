@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColor.darkBgColor,
+        backgroundColor: AppColor.darkBgColor,automaticallyImplyLeading: false,
         elevation: 1,
         title: TextField(
           controller: searchController,
@@ -64,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
           } else if (state is RecipeLoaded) {
             return NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
+
                 if (scrollNotification is ScrollEndNotification &&
                     scrollNotification.metrics.pixels ==
                         scrollNotification.metrics.maxScrollExtent) {
@@ -80,10 +81,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     return RecipieCard(
                       title: recipe.title ?? 'No Title',
                       imageUrl: recipe.image ?? '',
-                      onSeeMore: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                          return const DetailedPage();
-                        }));
+                      onSeeMore: () { if (recipe.id != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => DetailedPage(recipeId: recipe.id!),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Invalid recipe ID')),
+                        );
+                      }
                       },
                     );
                   } else {

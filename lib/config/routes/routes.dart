@@ -12,8 +12,8 @@ switch(settings.name){
     return MaterialPageRoute(builder: (context)=>SplashScreen());
   case RoutesName.homeScreen:
     return MaterialPageRoute(builder: (context)=>HomeScreen());
-  case RoutesName.detailScreen:
-    return MaterialPageRoute(builder: (context)=>DetailedPage());
+  // case RoutesName.detailScreen:
+  //   return MaterialPageRoute(builder: (context)=>DetailedPage(recipeId: 0,));
   default:return MaterialPageRoute(builder: (context){
     return Scaffold(
       body: Center(child: TextCustom(text: "No Route Generated"),),
