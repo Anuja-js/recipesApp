@@ -12,7 +12,6 @@ class RecipeRepository {
   }) async {
     const String apiUrl =
         'https://api.spoonacular.com/recipes/visualizeRecipe?apiKey=5f49213d91e34457a121d6ad3892e0c8';
-
     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
     request.fields['title'] = title;
     request.fields['ingredients'] = ingredients;

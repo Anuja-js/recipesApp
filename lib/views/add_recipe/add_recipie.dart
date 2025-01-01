@@ -79,16 +79,24 @@ class AddRecipe extends StatelessWidget {
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        bloc.add(
-                          SubmitRecipeEvent(
-                            title: titleController.text,
-                            ingredients: ingredientsController.text,
-                            instructions: instructionsController.text,
-                            readyInMinutes: readyInMinutesController.text,
-                            servings: servingsController.text,
-                            image: (state is ImagePickedState) ? state.selectedImage : null,
-                          ),
-                        );
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        if(state is ImagePickedState){
+                          bloc.add(
+                            SubmitRecipeEvent(
+                              title: titleController.text,
+                              ingredients: ingredientsController.text,
+                              instructions: instructionsController.text,
+                              readyInMinutes: readyInMinutesController.text,
+                              servings: servingsController.text,
+                              image: (state is ImagePickedState) ? state.selectedImage : null,
+                            ),
+                          );
+                        }else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: TextCustom( text:"Please Select image",color: AppColor.darkFontColor, )),
+                          );
+                        }
+
                       },
                       child: Text('Post Recipe'),
                     ),
