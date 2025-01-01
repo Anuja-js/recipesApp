@@ -21,7 +21,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         // Fetch recipes with provided query
         final recipes = await recipeRepository.fetchRecipes(
           query: event.query,
-          number: 10,
+          number: 100,
           offset: currentPage * 10,
         );
 
@@ -34,12 +34,9 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
           ));
           return;
         }
-
-        // Add new results to the list
         allRecipes.addAll(recipes.results!);
         currentPage++;
         hasMoreData = recipes.results!.length == 10;
-
         emit(RecipeLoaded(allRecipes));
       } catch (e) {
         emit(RecipeError('Failed to fetch recipes: $e'));

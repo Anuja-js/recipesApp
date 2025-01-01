@@ -9,18 +9,23 @@ class DisplayAddedRecipe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-    onWillPop:(){
+    return
+    //   WillPopScope(
+    // onWillPop:(){
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-      return HomeScreen();
-    }));
-    return Future.value(true);
-    },
-      child: Scaffold(backgroundColor: AppColor.darkFontColor,
+    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+    //   return HomeScreen();
+    // }));
+    // return Future.value(true);
+    // },
+    //   child:
+      Scaffold(backgroundColor: AppColor.darkFontColor,
         appBar: AppBar(
           backgroundColor: AppColor.darkBgColor,
           elevation: 1,leading: IconButton(onPressed: (){
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+            return HomeScreen();
+          }));
         }, icon: Icon(Icons.arrow_back_ios_outlined,color: AppColor.darkFontColor,)),
           title: TextCustom(text: 'Recipe Result',textSize: 18,fontWeight: FontWeight.bold,),
         ),
@@ -37,16 +42,19 @@ class DisplayAddedRecipe extends StatelessWidget {
             ),
             SizedBox(height: 20),
             responseData['url'] != null
-                ? Image.network(
-              responseData['url'],
-              width: double.infinity,
-              fit: BoxFit.fitHeight,
-            )
+                ? SizedBox(width: double.infinity,
+              height: MediaQuery.of(context).size.height/1.6,
+                  child: Image.network(
+                                responseData['url'],
+                                width: double.infinity,
+                                fit: BoxFit.fitHeight,
+                              ),
+                )
                 : Text('No image available'),
 
           ],
         ),
-      ),
+      // ),
     );
   }
 }

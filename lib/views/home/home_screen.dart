@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
     recipeRepository: RecipieRepository(),
   );
 
-  final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -37,25 +36,26 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: AppColor.darkBgColor,automaticallyImplyLeading: false,
         elevation: 1,
-        title: TextField(
-          controller: searchController,
-          decoration:  InputDecoration(
-            hintText: 'Search...',
-            hintStyle: TextStyle(color: AppColor.darkFontColor),
-            border: InputBorder.none,
-            prefixIcon: IconButton(onPressed: (){
-              searchController.clear();
-              context.read<RecipeBloc>().add(FetchRecipesEvent(query: ''));
-            },
-                icon: Icon(Icons.search, color: AppColor.darkLabelColor)),
-          ),
-          style: const TextStyle(color: AppColor.darkFontColor),
-          onChanged: (value) {
-            context.read<RecipeBloc>().add(FetchRecipesEvent(query: value.trim()));
-            print('Search Submitted: $value');
-          },
-
-        ),
+        title: TextCustom(text: "Items",color: AppColor.darkFontColor,textSize: 18,fontWeight: FontWeight.bold,),
+      //   TextField(
+      //   controller: searchController,
+      //   decoration:  InputDecoration(
+      //     hintText: 'Search...',
+      //     hintStyle: TextStyle(color: AppColor.darkFontColor),
+      //     border: InputBorder.none,
+      //     prefixIcon: IconButton(onPressed: (){
+      //       searchController.clear();
+      //       context.read<RecipeBloc>().add(FetchRecipesEvent(query: ''));
+      //     },
+      //         icon: Icon(Icons.search, color: AppColor.darkLabelColor)),
+      //   ),
+      //   style: const TextStyle(color: AppColor.darkFontColor),
+      //   onChanged: (value) {
+      //     context.read<RecipeBloc>().add(FetchRecipesEvent(query: value.trim()));
+      //     print('Search Submitted: $value');
+      //   },
+      //
+      // ),
       ),
       body: BlocBuilder<RecipeBloc, RecipeState>(
         builder: (context, state) {
@@ -69,37 +69,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollNotification.metrics.pixels ==
                         scrollNotification.metrics.maxScrollExtent) {
 
-                  context.read<RecipeBloc>().add(FetchRecipesEvent(query: searchController.text.trim()));
+                  context.read<RecipeBloc>().add(FetchRecipesEvent(query: " ",));
                 }
                 return false;
               },
               child: ListView.builder(
-                itemCount: state.recipes.length + 1,
+                itemCount: state.recipes.length + 1,shrinkWrap: true,
+
                 itemBuilder: (context, index) {
                   if (index < state.recipes.length) {
                     final recipe = state.recipes[index];
-                    return RecipieCard(
-                      title: recipe.title ?? 'No Title',
-                      imageUrl: recipe.image ?? '',
-                      onSeeMore: () { if (recipe.id != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (ctx) => DetailedPage(recipeId: recipe.id!),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Invalid recipe ID')),
-                        );
-                      }
-                      },
+                    return Column(
+                      children: [
+                        RecipieCard(
+                          title: recipe.title ?? 'No Title',
+                          imageUrl: recipe.image ?? '',
+                          onSeeMore: () { if (recipe.id != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => DetailedPage(recipeId: recipe.id!),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Invalid recipe ID')),
+                            );
+                          }
+                          },
+                        ),
+                        if(index==state.recipes.length-1&& state.isLoading)CircularProgressIndicator()
+                      ],
                     );
                   } else {
-                    // Show a loading indicator at the bottom
                     return context.read<RecipeBloc>().hasMoreData
                         ? const Center(child: CircularProgressIndicator())
-                        : const SizedBox.shrink();
+                        :
+                    const SizedBox.shrink();
                   }
                 },
               ),

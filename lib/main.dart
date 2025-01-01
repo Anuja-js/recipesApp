@@ -20,10 +20,12 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => SplashCubit()..startSplash(),
         ),
+
         BlocProvider(
         create: (_) => RecipeBloc(
     recipeRepository: RecipieRepository(),
     )..add(FetchRecipesEvent(query: '',)),),
+
       ],
       child: MaterialApp(
         title: 'Recipe App',
